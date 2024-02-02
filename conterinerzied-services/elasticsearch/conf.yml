@@ -1,0 +1,21 @@
+################################### Production Configuration ###################################
+### Author: Greg Dooper
+### Description: Parameters recommended from documentation
+
+network :
+    host : 0.0.0.0
+
+
+################################### Cluster ###################################
+
+# Cluster name identifies your cluster for auto-discovery. If you're running
+# multiple clusters on the same network, make sure you're using unique names.
+#
+cluster.name: opentrace
+
+
+# This grants anonymous users superuser access to Elasticsearch
+# THIS SHOULD ONLY BE USED FOR DEVELOPMENT
+xpack.security.enabled: false
+xpack.security.transport.ssl.enabled: false
+xpack.security.http.ssl.enabled: false

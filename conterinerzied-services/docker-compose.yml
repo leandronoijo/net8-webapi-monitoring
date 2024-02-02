@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  grafana:
+    restart: always
+    image: grafana/grafana:10.1.6
+    networks:
+      - jaeger-net
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+
+  jaeger:
+    restart: always
+    image: jaegertracing/all-in-one:1.52
+    depends_on:
+      - elasticsearch
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - SPAN_STORAGE_TYPE=elasticsearch
+      - ES_SERVER_URLS=http://elasticsearch:9200
+    networks:
+      - jaeger-net
+    ports:
+      - 4317:4317
+      - 16686:16686
+      - 4318:4318
+
+  elasticsearch:
+    restart: always
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    environment:
+      - discovery.type=single-node
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+      - ./elasticsearch/conf.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks:
+      - jaeger-net
+    ports:
+      - 9200:9200
+
+  prometheus:
+    restart: always
+    image: prom/prometheus:v2.49.0
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    extra_hosts:
+      - "webapi:${WEBAPI_IP}"
+    ports:
+      - 9090:9090
+    networks:
+      - jaeger-net
+
+  loki:
+    restart: always
+    image: grafana/loki:2.9.3
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - jaeger-net
+    ports:
+      - 3100:3100
+
+networks:
+  jaeger-net:
+
+volumes:
+  elasticsearch-data:
+  grafana-data:
