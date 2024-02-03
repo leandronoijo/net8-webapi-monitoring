@@ -16,8 +16,8 @@ This repository demonstrates a .NET 8 Web API for managing a todo list, integrat
 ### Cloning the Repository
 
 ```bash
-git clone <repository-url>
-cd <repository-name>
+git clone https://github.com/leandronoijo/net8-webapi-monitoring
+cd net8-webapi-monitoring
 ```
 
 ### Running the Web API
